@@ -1,29 +1,12 @@
-public class Nodo {
-    boolean izquierdo;
-    boolean Derecho;
-    int valor; 
 
+class Nodo<T> {
+    T value;
+    Nodo<T> left;
+    Nodo<T> right;
 
-    public Nodo(int valor, boolean izquierdo, boolean Derecho){
-        this.valor= valor;
-        this.izquierdo= izquierdo;
-        this.Derecho= Derecho; 
-        
+    Nodo(T value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
     }
-    
-    public int getvalor(){
-        return valor;
-    }
-    public boolean getesizquierdo(){
-        return izquierdo;
-    }
-    public boolean getesderecho(){
-        return Derecho;
-    }
-
-    public void Setvalor(int valor) {
-        this.valor = valor;
-    }
-   
-    
 }
