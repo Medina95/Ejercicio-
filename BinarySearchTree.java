@@ -1,5 +1,4 @@
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> {
     private Nodo<T> root;
@@ -100,6 +99,15 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
         return minValue;
     }
 
+    private T maxvalue(Nodo<T> nodo) {
+        T maxvalue = nodo.value;
+        while (nodo.right != null) {
+            maxvalue = nodo.right.value;
+            nodo = nodo.right;
+        }
+        return maxvalue;
+    }
+
     // Método para recorrer el árbol en orden
     public void inOrderTraversal() {
         inOrder(root);
@@ -142,6 +150,252 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
         }
     }
 
+
+    public int altura() {
+        return alturaRec(root);
+    }
+
+    private int alturaRec(Nodo<T> nodo) {
+
+        if (nodo == null) {
+            return 0; // La altura de un nodo nulo es 0
+        }
+        return 1 + Math.max(alturaRec(nodo.left), alturaRec(nodo.right));
+    }
+
+
+
+
+    public boolean isBalanced() {
+
+        return isBalancedRec(root) != -1;
+    }
+
+    private int isBalancedRec(Nodo<T> nodo) {
+        if (nodo == null) {
+            return 0; // La altura de un nodo nulo es 0
+        }
+
+        // Calcular la altura de los subárboles
+        int alturaIzquierda = isBalancedRec(nodo.left);
+        int alturaDerecha = isBalancedRec(nodo.right);
+
+        // Verificar la diferencia de alturas
+        if (Math.abs(alturaIzquierda - alturaDerecha) > 1) {
+            return -1; // Desbalanceado
+        }
+        // Retornar la altura del nodo actual
+        return 1 + Math.max(alturaIzquierda, alturaDerecha);
+    }
+    public int countNodes() {
+        return countNodesRec(root);
+    }
+
+    private int countNodesRec(Nodo<T> nodo) {
+        if (nodo == null) {
+            return 0; // Si el nodo es nulo, no hay nodos que contar
+        }
+        // Sumar 1 (el nodo actual) más la cantidad de nodos en los subárboles izquierdo y derecho
+        return 1 + countNodesRec(nodo.left) + countNodesRec(nodo.right);
+    }
+
+
+
+    public void levelOrderTraversal() {
+        if (root == null) {
+            System.out.println("El árbol está vacío.");
+            return;
+        }
+
+        Queue<Nodo<T>> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            Nodo<T> current = queue.poll(); // Obtener el nodo en la parte frontal de la cola
+            System.out.print(current.value + " "); // Visitar el nodo
+
+            // Añadir los hijos del nodo actual a la cola
+            if (current.left != null) {
+                queue.add(current.left);
+            }
+            if (current.right != null) {
+                queue.add(current.right);
+            }
+        }
+        System.out.println(); // Para un salto de línea después de imprimir todos los nodos
+    }
+
+
+
+    @Override
+    public Object[] toArray() {
+        List<Object> list = new ArrayList<>();
+        toArrayRec(root, list); // Llenar la lista
+        return list.toArray(); // Convertir la lista en un array y retornarlo
+    }
+
+    private void toArrayRec(Nodo<T> nodo, List<Object> list) {
+        if (nodo != null) {
+            toArrayRec(nodo.left, list); // Recorrer el subárbol izquierdo
+            list.add(nodo.value); // Añadir el valor del nodo a la lista
+            toArrayRec(nodo.right, list); // Recorrer el subárbol derecho
+        }
+    }
+    @Override
+    public <T1> T1[] toArray(T1[] a) {
+        return null;
+    }
+
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        for (Object element : c) {
+            if (!contains(element)) { // Verificar si cada elemento está en el árbol
+                return false;
+            }
+        }
+        return true; // Todos los elementos están en el árbol
+    }
+
+
+    @Override
+    public boolean addAll(Collection<? extends T> c) {
+        boolean modified = false;
+        for (T element : c) {
+            if (add(element)) { // Utilizar el método insert
+                modified = true; // Si se insertó un nuevo elemento
+            }
+        }
+        return modified; // Retornar true si se modificó el árbol
+    }
+
+    // modificar la colección de tal manera que solo queden los elementos que están presentes en la colección y elimina los demas
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        boolean modified = false;
+        for (Object element : c) {
+            if (remove((T) element)) { // Utilizar el método delete
+                modified = true; // Si se eliminó un elemento
+            }
+        }
+        return modified; // Retornar true si se modificó el árbol
+    }
+
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        boolean modified = false;
+        List<T> toRemove = new ArrayList<>();
+
+        // Encontrar todos los elementos que no están en la colección c
+        for (Object element : toArray()) {
+            if (!c.contains(element)) {
+                toRemove.add((T) element); // Añadir a la lista de eliminación
+            }
+        }
+
+        // Eliminar los elementos que no están en la colección c
+        for (T element : toRemove) {
+            if (remove(element)) { // Utilizar el método delete
+                modified = true; // Si se eliminó un elemento
+            }
+        }
+        return modified; // Retornar true si se modificó el árbol
+    }
+
+    //esta vacio ¿?
+
+    public boolean isEmpty() {
+        return root == null;
+    }
+    //eliminar
+    @Override
+    public boolean remove(Object o) {
+        if (o == null) {
+            return false; // No se puede eliminar un valor nulo
+        }
+        @SuppressWarnings("unchecked")
+        T value = (T) o; // Convertir el objeto a tipo T
+        if (search(value) != null) {
+            delete(value);
+            return true;
+        }
+        return false; // no se pudo eliminar xd
+    }
+    // insertar
+    @Override
+    public boolean add(T t) {
+        if (t == null) {
+            throw new NullPointerException("No se puede añadir un valor nulo."); // Manejo de valores nulos
+        }
+        insert(t);
+        return true;
+    }
+
+    // numero de nodos
+    @Override
+    public int size() {
+        return countNodes();
+    }
+
+    // eliminar
+    @Override
+    public void clear() {
+        root = null;
+    }
+
+
+    //verificar qeu dconitene un objeto
+
+    @Override
+    public boolean contains(Object o) {
+        if (o == null) {
+            return false; // No se puede buscar un valor nulo
+        }
+        @SuppressWarnings("unchecked")
+        T value = (T) o; // Convierte el objeto a tipo T
+        return search(value) != null; // Retorna true si el valor se encuentra
+    }
+
+    //definir un iterador en este caso  para organizar por nivels
+    @Override
+    public Iterator<T> iterator() {
+        return new LevelOrderIterator(); // Retornar una nueva instancia del iterador
+    }
+    private class LevelOrderIterator implements Iterator<T> {
+        private Queue<Nodo<T>> queue = new LinkedList<>();
+
+        public LevelOrderIterator() {
+            if (root != null) {
+                queue.add(root); // Añadir la raíz a la cola
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !queue.isEmpty(); // Verificar si hay más elementos
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException(); // Lanza excepción si no hay más elementos
+            }
+            Nodo<T> current = queue.poll(); // Obtener el nodo en la parte frontal de la cola
+
+            // Añadir los hijos del nodo actual a la cola
+            if (current.left != null) {
+                queue.add(current.left);
+            }
+            if (current.right != null) {
+                queue.add(current.right);
+            }
+
+            return current.value; // Retornar el valor del nodo actual
+        }
+    }
+
+
     public static void main(String[] args) {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
@@ -153,7 +407,8 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
         bst.insert(7);
         bst.insert(12);
         bst.insert(18);
-
+        System.out.print("Recorrido en orden: ");
+        bst.inOrderTraversal(); // 3 5 7 10 12 15 18
         // 2) Búsqueda
         Nodo<Integer> foundNodo = bst.search(7);
         if (foundNodo != null) {
@@ -170,8 +425,8 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
         }
 
         // 3) Eliminar un nodo
-        bst.delete(10);
-        bst.delete(500); // Intenta eliminar un nodo que no existe
+        bst.remove(10);
+        bst.remove(500); // Intenta eliminar un nodo que no existe
 
         System.out.print("Recorrido en orden después de eliminar 10: ");
         bst.inOrderTraversal(); // 3 5 7 12 15 18
@@ -185,70 +440,72 @@ public class BinarySearchTree<T extends Comparable<T>> implements Collection<T> 
 
         System.out.print("Recorrido en postorder: ");
         bst.postOrderTraversal(); // 3 7 5 12 18 15 10
-    }
 
-    @Override
-    public int size() {
-        return 0;
-    }
+        // 5)  minimo
+        Integer minValue = bst.minValue(bst.root);
+        System.out.println("El mínimo es: " + minValue);
+        //6) Maximo
+        Integer maxValue = bst.maxvalue(bst.root);
+        System.out.println("El máximo es: " + maxValue);
+        // 7 altura
+        System.out.println("La altura del árbol es: " + bst.altura());
+        // 8 es baklanceado
+        boolean balanced = bst.isBalanced();
+        System.out.println("El árbol está balanceado: " + balanced);
+        // 9
+        System.out.print("Recorrido por nivel: ");
+        bst.levelOrderTraversal();
+        //11 contar nodos
+        int totalNodos = bst.size();
+        System.out.println("Total de nodos en el árbol: " + totalNodos);
+        //10 eliminar todos los nodos
+        bst.clear();
+        int totalNodos1 = bst.size();
+        System.out.println("Total de nodos en el árbol después de clear: " + totalNodos1);
 
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
 
-    @Override
-    public boolean contains(Object o) {
-        return false;
-    }
 
-    @Override
-    public Iterator<T> iterator() {
-        return null;
-    }
+        // utilizando las funciones de collection modificadas
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("El árbol está vacío: " + bst.isEmpty());
+        bst.add(10);
+        bst.add(5);
+        bst.add(15);
+        bst.add(3);
+        bst.add(7);
+        bst.add(12);
+        bst.add(18);
+        bst.remove(10);
+        System.out.println("¿Contiene 7? " + bst.contains(7));
+        System.out.println("utilizando el iterador");
+        Iterator<Integer> iterator = bst.iterator();
+        while (iterator.hasNext()) {
+            System.out.print(iterator.next() + " "); // Imprime los elementos en orden por niveles
 
-    @Override
-    public Object[] toArray() {
-        return new Object[0];
-    }
+        }
+        System.out.println(); // Salto de línea
+        Object[] array = bst.toArray();
+        System.out.print("Array de elementos: ");
+        for (Object obj : array) {
+            System.out.print(obj + " "); // Imprimir cada elemento del array
+        }
+        System.out.println(); // Salto de línea
+        List<Integer> collection = new ArrayList<>(Arrays.asList(5, 10, 20));
+        System.out.print("Array de elementos de la collection que se va a trabajar: ");
+        for (Object obj : collection) {
+            System.out.print(obj + " "); // Imprimir cada elemento del array
+        }
+        System.out.println();
+        System.out.println("¿El arbol contiene esos elementos? " + bst.containsAll(collection)); // Debería ser false
+        bst.addAll(collection);
+        System.out.println("Array después de añadir: " + Arrays.toString(bst.toArray()));
+        bst.removeAll(collection);
+        System.out.println("Array después de eliminar: " + Arrays.toString(bst.toArray()));
 
-    @Override
-    public <T1> T1[] toArray(T1[] a) {
-        return null;
-    }
-
-    @Override
-    public boolean add(T t) {
-        return false;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return false;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends T> c) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public void clear() {
+        bst.add(10); // Reinsertar el elemento que tiene de la collecion
+        bst.add(5);
+        bst.retainAll(collection);
+        System.out.println("Array después de retener: " + Arrays.toString(bst.toArray()));
 
     }
 }
