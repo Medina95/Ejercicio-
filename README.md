@@ -118,7 +118,7 @@ Para ejecutar este proyecto, necesitarás tener instalado:
 5. ejecuta la clase BinarySearchTree
 
 ## Comentarios
-    Siendo sincera yo no acabe en la clase puedes ver mis commits y calificarme lo que tenia honestamente, implementar los metodos del collection, recordar el arbol y la recursividad me tomo su tiempo sin embargo queria terminarlo.  
+Siendo sincera yo no acabe en la clase puedes ver mis commits y calificarme lo que tenia honestamente, implementar los metodos del collection, recordar el arbol y la recursividad me tomo su tiempo sin embargo queria terminarlo.  
 
 
 
